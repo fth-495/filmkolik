@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FilmKolik - Kişisel Film ve Dizi Önerilerin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 0.8rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .movie-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .movie-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .movie-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .movie-info {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+
+        .platforms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .platform-tag {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .btn-watch {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .btn-watch:hover {
+            background: #218838;
+        }
+
+        .platform-prices {
+            background: #e9ecef;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .ad-space {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ad-space::before {
+            content: '💰';
+            font-size: 3rem;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            opacity: 0.3;
+        }
+
+        .premium-banner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .premium-price {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .btn-premium {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-premium:hover {
+            transform: scale(1.05);
+        }
+
+        .affiliate-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .affiliate-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .affiliate-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .platform-logo {
+            width: 80px;
+            height: 50px;
+            background: #333;
+            margin: 0 auto 1rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .social-media-bar {
+            background: #333;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s;
+        }
+
+        .social-link:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">FilmKolik</div>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#ana-sayfa">Ana Sayfa</a></li>
+                        <li><a href="#filmler">Filmler</a></li>
+                        <li><a href="#diziler">Diziler</a></li>
+                        <li><a href="#top-listeler">Top Listeler</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+    <!-- Sosyal Medya Takip Barı -->
+    <div class="social-media-bar">
+        <div class="container">
+            <p style="margin-bottom:1rem;">🔥 Bizi takip edin - günlük film önerileri!</p>
+            <div class="social-links">
+                <a href="#" class="social-link" onclick="socialClick('youtube')">📺 YouTube (10K takipçi)</a>
+                <a href="#" class="social-link" onclick="socialClick('instagram')">📷 Instagram (5K takipçi)</a>
+                <a href="#" class="social-link" onclick="socialClick('tiktok')">🎵 TikTok (15K takipçi)</a>
+                <a href="#" class="social-link" onclick="socialClick('twitter')">🐦 Twitter</a>
+            </div>
+            <p style="font-size:0.8rem;margin-top:1rem;opacity:0.7;">Sosyal medya geliri: Ayda $200-800</p>
+        </div>
+    </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Kişisel Film ve Dizi Önerilerin</h1>
+            <p>Zevklerine uygun filmler ve diziler keşfet, hangi platformda izleyeceğini öğren!</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Google AdSense Banner 728x90 -->
+        <div class="ad-space">
+            <h3>🚀 GOOGLE ADSENSE BURAYA GELECEK</h3>
+            <p>Tık başına kazanç: $0.50 - $2.00</p>
+            <button onclick="window.open('https://www.googleadservices.com/pagead/aclk', '_blank')" style="background:#4285f4;color:white;border:none;padding:0.5rem 1rem;border-radius:5px;cursor:pointer;">Örnek Reklam Tıkla</button>
+        </div>
+
+        <!-- Premium Üyelik Banner -->
+        <div class="premium-banner">
+            <h2>🎬 PREMİUM ÜYELİK - SINIRSIZ ERİŞİM!</h2>
+            <div class="premium-price">₺19.99/ay</div>
+            <p>✅ Sınırsız film önerisi<br>✅ Reklamsız deneyim<br>✅ İlk fragman erişimi<br>✅ Kişisel watchlist</p>
+            <button class="btn-premium" onclick="premiumSignup()">ŞİMDİ ÜYE OL</button>
+        </div>
+
+        <div class="search-section">
+            <h2 style="margin-bottom: 2rem; color: #333;">Film/Dizi Ara ve Öneri Al</h2>
+            <form class="search-form" id="searchForm">
+                <div class="form-group">
+                    <label for="genre">Tür Seçin</label>
+                    <select id="genre" name="genre">
+                        <option value="">Tüm Türler</option>
+                        <option value="aksiyon">Aksiyon</option>
+                        <option value="komedi">Komedi</option>
+                        <option value="dram">Dram</option>
+                        <option value="korku">Korku</option>
+                        <option value="romantik">Romantik</option>
+                        <option value="bilimkurgu">Bilim Kurgu</option>
+                        <option value="gerilim">Gerilim</option>
+                        <option value="belgesel">Belgesel</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="type">İçerik Tipi</label>
+                    <select id="type" name="type">
+                        <option value="">Hepsi</option>
+                        <option value="film">Film</option>
+                        <option value="dizi">Dizi</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">Minimum Puan</label>
+                    <select id="rating" name="rating">
+                        <option value="">Farketmez</option>
+                        <option value="9">9.0+</option>
+                        <option value="8">8.0+</option>
+                        <option value="7">7.0+</option>
+                        <option value="6">6.0+</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">Önerileri Getir</button>
+            </form>
+        </div>
+
+        <!-- Affiliate Marketing Section -->
+        <div style="background:white;border-radius:20px;padding:2rem;margin:2rem 0;box-shadow:0 10px 30px rgba(0,0,0,0.1);">
+            <h2 style="text-align:center;margin-bottom:2rem;color:#333;">🎯 İZLEMEK İÇİN TIKLA - ANINDA ERİŞİM</h2>
+            <div class="affiliate-links">
+                <div class="affiliate-card" onclick="affiliateClick('netflix')">
+                    <div class="platform-logo" style="background:#e50914;">NETFLIX</div>
+                    <h3>₺29.99/ay</h3>
+                    <p>İlk ay ücretsiz!</p>
+                    <button style="background:#e50914;color:white;border:none;padding:0.5rem 1rem;border-radius:5px;cursor:pointer;">TIKLA & İZLE</button>
+                </div>
+                
+                <div class="affiliate-card" onclick="affiliateClick('disney')">
+                    <div class="platform-logo" style="background:#113ccf;">DISNEY+</div>
+                    <h3>₺34.99/ay</h3>
+                    <p>Marvel + Star Wars!</p>
+                    <button style="background:#113ccf;color:white;border:none;padding:0.5rem 1rem;border-radius:5px;cursor:pointer;">TIKLA & İZLE</button>
+                </div>
+                
+                <div class="affiliate-card" onclick="affiliateClick('prime')">
+                    <div class="platform-logo" style="background:#ff9900;">PRIME</div>
+                    <h3>₺34.90/ay</h3>
+                    <p>Ücretsiz kargo dahil!</p>
+                    <button style="background:#ff9900;color:white;border:none;padding:0.5rem 1rem;border-radius:5px;cursor:pointer;">TIKLA & İZLE</button>
+                </div>
+                
+                <div class="affiliate-card" onclick="affiliateClick('hbo')">
+                    <div class="platform-logo" style="background:#8560a8;">HBO MAX</div>
+                    <h3>₺39.99/ay</h3>
+                    <p>Game of Thrones!</p>
+                    <button style="background:#8560a8;color:white;border:none;padding:0.5rem 1rem;border-radius:5px;cursor:pointer;">TIKLA & İZLE</button>
+                </div>
+            </div>
+            <p style="text-align:center;color:#666;font-size:0.9rem;margin-top:1rem;">
+                💡 Bu linkler affiliate linklerdir. Sizin için ücretsiz, bize komisyon kazandırır!
+            </p>
+        </div>
+
+        <!-- Sponsorluk Reklamı -->
+        <div class="ad-space">
+            <h3>🎮 SPONSORLUK: NordVPN ile Güvenli İzleme!</h3>
+            <p>Tüm platformlara güvenli erişim + %65 indirim</p>
+            <button onclick="sponsorClick('nordvpn')" style="background:#00c896;color:white;border:none;padding:0.5rem 1rem;border-radius:5px;cursor:pointer;">ÖZEL İNDİRİM AL</button>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <h2 style="color: #333; margin-bottom: 1rem;">Önerilen İçerikler</h2>
+            <div class="results-grid" id="resultsGrid">
+                <!-- Sonuçlar JavaScript ile yüklenecek -->
+            </div>
+        </div>
+
+        <!-- Google AdSense Medium Rectangle -->
+        <div class="ad-space">
+            <h3>📱 GOOGLE ADSENSE - MEDIUM RECTANGLE</h3>
+            <p>300x250 - Yüksek CTR Alanı</p>
+            <button onclick="window.open('https://www.googleadservices.com/pagead/aclk', '_blank')" style="background:#34a853;color:white;border:none;padding:0.5rem 1rem;border-radius:5px;cursor:pointer;">Mobil Reklam Örneği</button>
+        </div>
+
+        <!-- Email Listesi -->
+        <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:2rem;border-radius:20px;margin:2rem 0;text-align:center;">
+            <h3>📧 ÖZELLİK FİLM ÖNERİLERİ</h3>
+            <p>Haftalık en iyi film ve dizi önerilerini kaçırma!</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
+                <input type="email" placeholder="Email adresiniz" style="padding:0.8rem;border-radius:10px;border:none;min-width:250px;">
+                <button onclick="emailSignup()" style="background:#ff6b6b;color:white;border:none;padding:0.8rem 1.5rem;border-radius:10px;cursor:pointer;font-weight:bold;">ABONE OL</button>
+            </div>
+            <p style="font-size:0.8rem;margin-top:1rem;opacity:0.8;">Email ile para kazanma: Lista başına $1-3</p>
+        </div>
+    </div>
+
+    <script>
+        const movies = [
+            {
+                title: "The Shawshank Redemption",
+                type: "film",
+                genre: "dram",
+                rating: 9.3,
+                year: 1994,
+                description: "Haksız yere hapse atılan bir bankacının hapishanede geçirdiği yılları anlatan unutulmaz dram.",
+                platforms: ["Netflix", "Amazon Prime"],
+                prices: {
+                    "Netflix": "₺29.99/ay",
+                    "Amazon Prime": "₺34.90/ay"
+                },
+                trailer: "#"
+            },
+            {
+                title: "Breaking Bad",
+                type: "dizi",
+                genre: "dram",
+                rating: 9.5,
+                year: 2008,
+                description: "Kimya öğretmeni Walter White'ın uyuşturucu dünyasına giriş hikayesi.",
+                platforms: ["Netflix", "Disney+"],
+                prices: {
+                    "Netflix": "₺29.99/ay",
+                    "Disney+": "₺34.99/ay"
+                },
+                trailer: "#"
+            },
+            {
+                title: "Inception",
+                type: "film",
+                genre: "bilimkurgu",
+                rating: 8.8,
+                year: 2010,
+                description: "Rüya içinde rüya konseptini kullanan aksiyon dolu bilim kurgu filmi.",
+                platforms: ["Amazon Prime", "Apple TV+"],
+                prices: {
+                    "Amazon Prime": "₺34.90/ay",
+                    "Apple TV+": "₺39.99/ay"
+                },
+                trailer: "#"
+            },
+            {
+                title: "The Dark Knight",
+                type: "film",
+                genre: "aksiyon",
+                rating: 9.0,
+                year: 2008,
+                description: "Batman'in Joker ile mücadelesini konu alan süper kahraman filmi.",
+                platforms: ["Netflix", "HBO Max"],
+                prices: {
+                    "Netflix": "₺29.99/ay",
+                    "HBO Max": "₺39.99/ay"
+                },
+                trailer: "#"
+            },
+            {
+                title: "Stranger Things",
+                type: "dizi",
+                genre: "korku",
+                rating: 8.7,
+                year: 2016,
+                description: "1980'lerde küçük kasabada yaşanan paranormal olayları konu alan Netflix orijinal dizisi.",
+                platforms: ["Netflix"],
+                prices: {
+                    "Netflix": "₺29.99/ay"
+                },
+                trailer: "#"
+            },
+            {
+                title: "Avengers: Endgame",
+                type: "film",
+                genre: "aksiyon",
+                rating: 8.4,
+                year: 2019,
+                description: "Marvel Cinematic Universe'nin epik finali.",
+                platforms: ["Disney+", "Amazon Prime"],
+                prices: {
+                    "Disney+": "₺34.99/ay",
+                    "Amazon Prime": "₺34.90/ay"
+                },
+                trailer: "#"
+            }
+        ];
+
+        // Para Kazanma Fonksiyonları
+        let totalEarnings = 0;
+
+        function affiliateClick(platform) {
+            // Her affiliate tık için komisyon
+            const earnings = {
+                'netflix': 25,
+                'disney': 30,
+                'prime': 20,
+                'hbo': 35
+            };
+            
+            totalEarnings += earnings[platform];
+            
+            // Gerçek affiliate linkler buraya
+            const links = {
+                'netflix': 'https://netflix.com/tr/?ref=SENIN_AFFILIATE_KODUN',
+                'disney': 'https://disneyplus.com/tr/?ref=SENIN_AFFILIATE_KODUN',
+                'prime': 'https://primevideo.com/tr/?ref=SENIN_AFFILIATE_KODUN',
+                'hbo': 'https://hbomax.com/tr/?ref=SENIN_AFFILIATE_KODUN'
+            };
+            
+            alert(`💰 KAZANÇ! ${earnings[platform]} dolar komisyon kazandınız!\nToplam kazanç: ${totalEarnings} dolar\n\nKullanıcı ${platform.toUpperCase()} sayfasına yönlendiriliyor...`);
+            
+            // Yeni sekmede affiliate link aç
+            window.open(links[platform], '_blank');
+        }
+
+        function sponsorClick(sponsor) {
+            totalEarnings += 15; // Sponsorluk tık başına kazanç
+            alert(`🎯 SPONSORLUK KAZANCI! 15 dolar kazandınız!\nToplam kazanç: ${totalEarnings} dolar\n\n${sponsor.toUpperCase()} sponsorluk linkine yönlendiriliyor...`);
+            window.open('https://nordvpn.com/tr/?ref=SENIN_SPONSOR_KODUN', '_blank');
+        }
+
+        function premiumSignup() {
+            alert(`💎 PREMİUM ÜYELİK!\n\nStripe/PayPal ödeme sayfasına yönlendirileceksiniz.\nAylık gelir: ₺19.99 × üye sayısı\n\n100 üye = ₺1,999/ay ekstra gelir!`);
+            // Gerçek ödeme linkine yönlendir
+            window.open('https://buy.stripe.com/SENIN_STRIPE_LINK', '_blank');
+        }
+
+        function emailSignup() {
+            const email = document.querySelector('input[type="email"]').value;
+            if(email) {
+                totalEarnings += 2; // Email başına kazanç
+                alert(`📧 EMAIL LİSTESİ KAZANCI!\n\nEmail eklendi: ${email}\n2 dolar kazandınız!\nToplam kazanç: ${totalEarnings} dolar\n\nEmail pazarlama ile ayda 500-1000 dolar ek gelir!`);
+            } else {
+                alert('Lütfen email adresinizi girin!');
+            }
+        }
+
+        function socialClick(platform) {
+            totalEarnings += 1; // Sosyal medya tık başına
+            const messages = {
+                'youtube': 'YouTube kanalımızda film analizleri!\nAbone ol, videolar izle - her video $50-200 kazandırır!',
+                'instagram': 'Instagram hesabımızı takip et!\nSponsorluk postları - post başına $100-500 kazanç!',
+                'tiktok': 'TikTok hesabımızı takip et!\nViral videolar - video başına $200-1000 kazanç!',
+                'twitter': 'Twitter hesabımızı takip et!\nTweet sponsorluları - tweet başına $50-200 kazanç!'
+            };
+            
+            alert(`📱 SOSYAL MEDYA KAZANCI!\n\n${messages[platform]}\n\n1 dolar kazandınız!\nToplam kazanç: ${totalEarnings} dolar`);
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating / 2);
+            const halfStar = (rating % 2) >= 1;
+            let starsHTML = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '★';
+            }
+            if (halfStar) {
+                starsHTML += '☆';
+            }
+            
+            return starsHTML;
+        }
+
+        function createMovieCard(movie) {
+            const platformTags = movie.platforms.map(platform => 
+                `<span class="platform-tag">${platform}</span>`
+            ).join('');
+
+            const pricesHTML = Object.entries(movie.prices).map(([platform, price]) =>
+                `<strong>${platform}:</strong> ${price}`
+            ).join(' | ');
+
+            return `
+                <div class="movie-card">
+                    <div class="movie-title">${movie.title}</div>
+                    <div class="movie-info">
+                        ${movie.year} • ${movie.type.charAt(0).toUpperCase() + movie.type.slice(1)}
+                    </div>
+                    <div class="rating">
+                        <span class="stars">${generateStars(movie.rating)}</span>
+                        <span>${movie.rating}/10</span>
+                    </div>
+                    <p style="margin-bottom: 1rem; line-height: 1.5;">${movie.description}</p>
+                    <div class="platforms">
+                        ${platformTags}
+                    </div>
+                    <div class="platform-prices">
+                        <strong>Fiyatlar:</strong><br>
+                        ${pricesHTML}
+                    </div>
+                    <button class="btn-watch" onclick="showWatchOptions('${movie.title}', ${JSON.stringify(movie.platforms).replace(/"/g, '&quot;')})">
+                        💰 İZLE & PARA KAZAN
+                    </button>
+                </div>
+            `;
+        }
+
+        function showWatchOptions(title, platforms) {
+            // Her film tıklaması için komisyon hesabı
+            totalEarnings += 5;
+            
+            const platformLinks = {
+                "Netflix": "netflix",
+                "Disney+": "disney", 
+                "Amazon Prime": "prime",
+                "HBO Max": "hbo",
+                "Apple TV+": "prime"
+            };
+
+            let message = `🎬 ${title} filmini izlemek için:\n\n`;
+            platforms.forEach(platform => {
+                message += `💰 ${platform}: Tıkla ve ${platform === 'Netflix' ? '25' : platform === 'Disney+' ? '30' : '20'} dolar kazan!\n`;
+            });
+            
+            message += `\n💵 Bu tıklama ile 5 dolar kazandınız!\nToplam kazancınız: ${totalEarnings} dolar\n\n(Gerçek affiliate linkleri aktif olacak!)`;
+            
+            alert(message);
+        }
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const genre = document.getElementById('genre').value;
+            const type = document.getElementById('type').value;
+            const rating = parseInt(document.getElementById('rating').value) || 0;
+
+            let filteredMovies = movies.filter(movie => {
+                return (!genre || movie.genre === genre) &&
+                       (!type || movie.type === type) &&
+                       (movie.rating >= rating);
+            });
+
+            const resultsGrid = document.getElementById('resultsGrid');
+            const resultsSection = document.getElementById('resultsSection');
+
+            if (filteredMovies.length > 0) {
+                resultsGrid.innerHTML = filteredMovies.map(createMovieCard).join('');
+                resultsSection.style.display = 'block';
+            } else {
+                resultsGrid.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">Aradığınız kriterlere uygun içerik bulunamadı.</p>';
+                resultsSection.style.display = 'block';
+            }
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Sayfa yüklendiğinde tüm filmleri göster
+        window.addEventListener('load', function() {
+            const resultsGrid = document.getElementById('resultsGrid');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            resultsGrid.innerHTML = movies.map(createMovieCard).join('');
+            resultsSection.style.display = 'block';
+
+            // Para kazanma bilgilendirmesi
+            setTimeout(() => {
+                alert('🚀 SİTENİZ HAZIR!\n\nTüm para kazanma sistemleri aktif:\n✅ Google AdSense\n✅ Affiliate Marketing\n✅ Premium Üyelik\n✅ Sponsorluk\n✅ Email Marketing\n✅ Sosyal Medya\n\nHer tıklama ile para kazanmaya başlayın!');
+            }, 2000);
+        });
+
+        // Gerçek zamanlı kazanç göstergesi
+        setInterval(() => {
+            if(totalEarnings > 0) {
+                document.title = `FilmKolik - Kazanç: ${totalEarnings}`;
+            }
+        }, 1000);
+    </script>card">
+                    <div class="movie-title">${movie.title}</div>
+                    <div class="movie-info">
+                        ${movie.year} • ${movie.type.charAt(0).toUpperCase() + movie.type.slice(1)}
+                    </div>
+                    <div class="rating">
+                        <span class="stars">${generateStars(movie.rating)}</span>
+                        <span>${movie.rating}/10</span>
+                    </div>
+                    <p style="margin-bottom: 1rem; line-height: 1.5;">${movie.description}</p>
+                    <div class="platforms">
+                        ${platformTags}
+                    </div>
+                    <div class="platform-prices">
+                        <strong>Fiyatlar:</strong><br>
+                        ${pricesHTML}
+                    </div>
+                    <button class="btn-watch" onclick="showWatchOptions('${movie.title}', ${JSON.stringify(movie.platforms).replace(/"/g, '&quot;')})">
+                        İzleme Seçenekleri
+                    </button>
+                </div>
+            `;
+        }
+
+        function showWatchOptions(title, platforms) {
+            // Affiliate linkler burada olacak
+            const platformLinks = {
+                "Netflix": "https://netflix.com/affiliate-link",
+                "Disney+": "https://disneyplus.com/affiliate-link",
+                "Amazon Prime": "https://primevideo.com/affiliate-link",
+                "HBO Max": "https://hbomax.com/affiliate-link",
+                "Apple TV+": "https://tv.apple.com/affiliate-link"
+            };
+
+            let message = `${title} filmini izlemek için:\n\n`;
+            platforms.forEach(platform => {
+                message += `• ${platform}: ${platformLinks[platform] || '#'}\n`;
+            });
+            
+            alert(message + "\n(Bu bağlantılar affiliate linklerdir - komisyon kazanırsınız!)");
+        }
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const genre = document.getElementById('genre').value;
+            const type = document.getElementById('type').value;
+            const rating = parseInt(document.getElementById('rating').value) || 0;
+
+            let filteredMovies = movies.filter(movie => {
+                return (!genre || movie.genre === genre) &&
+                       (!type || movie.type === type) &&
+                       (movie.rating >= rating);
+            });
+
+            const resultsGrid = document.getElementById('resultsGrid');
+            const resultsSection = document.getElementById('resultsSection');
+
+            if (filteredMovies.length > 0) {
+                resultsGrid.innerHTML = filteredMovies.map(createMovieCard).join('');
+                resultsSection.style.display = 'block';
+            } else {
+                resultsGrid.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">Aradığınız kriterlere uygun içerik bulunamadı.</p>';
+                resultsSection.style.display = 'block';
+            }
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Sayfa yüklendiğinde tüm filmleri göster
+        window.addEventListener('load', function() {
+            const resultsGrid = document.getElementById('resultsGrid');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            resultsGrid.innerHTML = movies.map(createMovieCard).join('');
+            resultsSection.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
