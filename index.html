@@ -1,173 +1,9 @@
-// Bölüm gösterme fonksiyonu
-        function showSection(sectionName) {
-            // Tüm bölümleri gizle
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Seçili bölümü göster
-            document.getElementById(sectionName).classList.add('active');
-            
-            // Bölüme göre içerik yükle
-            switch(sectionName) {
-                case 'movies':
-                    loadMoviesSection();
-                    break;
-                case 'series': 
-                    loadSeriesSection();
-                    break;
-                case 'watchlist':
-                    loadWatchlistSection();
-                    break;
-                case 'home':
-                    showHomeContent();
-                    break;
-            }
-        }
-
-        // Filmler bölümü
-        function loadMoviesSection() {
-            const movies = allMovies.filter(item => item.type === 'film');
-            const moviesResults = document.getElementById('moviesResults');
-            
-            // AdSense bannerı ekle
-            moviesResults.innerHTML = adsenseSlots.banner + movies.map(createMovieCard).join('') + adsenseSlots.rectangle;
-            
-            // Arama işlevselliği
-            const searchInput = document.getElementById('movieSearch');
-            searchInput.addEventListener('input', function() {
-                const query = this.value.toLowerCase();
-                const filteredMovies = movies.filter(movie => 
-                    movie.title.toLowerCase().includes(query) ||
-                    movie.description.toLowerCase().includes(query) ||
-                    movie.genre.toLowerCase().includes(query)
-                );
-                
-                moviesResults.innerHTML = adsenseSlots.banner + filteredMovies.map(createMovieCard).join('') + adsenseSlots.rectangle;
-            });
-        }
-
-        // Diziler bölümü  
-        function loadSeriesSection() {
-            const series = allMovies.filter(item => item.type === 'dizi');
-            const seriesResults = document.getElementById('seriesResults');
-            
-            // AdSense bannerı ekle
-            seriesResults.innerHTML = adsenseSlots.banner + series.map(createMovieCard).join('') + adsenseSlots.rectangle;
-            
-            // Arama işlevselliği
-            const searchInput = document.getElementById('seriesSearch');
-            searchInput.addEventListener('input', function() {
-                const query = this.value.toLowerCase();
-                const filteredSeries = series.filter(serie => 
-                    serie.title.toLowerCase().includes(query) ||
-                    serie.description.toLowerCase().includes(query) ||
-                    serie.genre.toLowerCase().includes(query)
-                );
-                
-                seriesResults.innerHTML = adsenseSlots.banner + filteredSeries.map(createMovieCard).join('') + adsenseSlots.rectangle;
-            });
-        }
-
-        // İzleme listesi bölümü
-        function loadWatchlistSection() {
-            if (!currentUser) {
-                document.getElementById('watchlistResults').innerHTML = `
-                    <div style="text-align: center; color: #666; padding: 3rem;">
-                        <h3>🔒 Giriş Gerekli</h3>
-                        <p>İzleme listenizi görmek için giriş yapmalısınız.</p>
-                        <button onclick="showLogin()" class="btn-primary" style="margin-top: 1rem;">Giriş Yap</button>
-                    </div>
-                `;
-                return;
-            }
-
-            const watchlistResults = document.getElementById('watchlistResults');
-            const emptyDiv = document.getElementById('watchlistEmpty');
-            
-            if (watchlist.length === 0) {
-                emptyDiv.style.display = 'block';
-                watchlistResults.innerHTML = '';
-            } else {
-                emptyDiv.style.display = 'none';
-                watchlistResults.innerHTML = adsenseSlots.sidebar + watchlist.map(createMovieCard).join('');
-            }
-        }
-
-        // Mevcut bölümü güncelle
-        function updateCurrentSection() {
-            const activeSection = document.querySelector('.section.active');
-            if (activeSection) {
-                const sectionId = activeSection.id;
-                showSection(sectionId);
-            }
-        }
-
-        // Giriş modal
-        function showLogin() {
-            closeModals();
-            document.getElementById('loginModal').style.display = 'block';
-        }
-
-        // Kayıt modal
-        function showRegister() {
-            closeModals();
-            document.getElementById('registerModal').style.display = 'block';
-        }
-
-        // Modal kapatma
-        function closeModals() {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.style.display = 'none';
-            });
-        }
-
-        // Giriş işlemi
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            const user = users.find(u => u.email === email && u.password === password);
-            
-            if (user) {
-                currentUser = user;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                
-                // Kullanıcıya özel verileri yükle
-                watchlist = JSON.parse(localStorage.getItem('watchlist_' + currentUser.email)) || [];
-                likedMovies = JSON.parse(localStorage.getItem('liked_' + currentUser.email)) || [];
-                
-                alert('Giriş başarılı! Hoş geldiniz ' + user.name);
-                checkLogin();
-                closeModals();
-                updateCurrentSection();
-            } else {
-                alert('Hatalı e-mail veya şifre!');
-            }
-        });
-
-        // Kayıt işlemi
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
-            
-            if (password !== passwordConfirm) {
-                alert('Şifreler eşleşmiyor!');
-                return;
-            }
-            
-            if (users.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FilmKolik - Kişisel Film ve Dizi Önerilerin</title>
+    <title>FilmKolik - En İyi Film ve Dizi Önerileri</title>
     <style>
         * {
             margin: 0;
@@ -176,458 +12,543 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            font-family: 'Netflix Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #141414;
+            color: white;
+            overflow-x: hidden;
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.5), transparent);
             padding: 1rem 0;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
-        .container {
-            max-width: 1200px;
+        .header.scrolled {
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .header-content {
+            padding: 0 4%;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .logo {
+            color: #e50914;
             font-size: 2rem;
             font-weight: bold;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
             cursor: pointer;
+            letter-spacing: -1px;
         }
 
         .nav-links {
             display: flex;
             gap: 2rem;
             list-style: none;
+            margin-left: 3rem;
         }
 
         .nav-links a {
+            color: white;
             text-decoration: none;
-            color: #333;
             font-weight: 500;
-            transition: color 0.3s;
             cursor: pointer;
+            transition: color 0.3s;
         }
 
         .nav-links a:hover {
-            color: #667eea;
+            color: #e50914;
         }
 
-        .user-menu {
+        .user-area {
             display: flex;
-            gap: 1rem;
             align-items: center;
+            gap: 1rem;
         }
 
-        .btn-login, .btn-register {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        .btn-auth {
+            background: #e50914;
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
             cursor: pointer;
-            font-weight: 500;
-            transition: transform 0.3s;
+            font-weight: 600;
+            transition: background 0.3s;
         }
 
-        .btn-login:hover, .btn-register:hover {
-            transform: translateY(-2px);
+        .btn-auth:hover {
+            background: #f40612;
         }
 
-        .user-info {
+        .user-profile {
             display: none;
             align-items: center;
             gap: 1rem;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(45deg, #e50914, #ff6b6b);
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
             font-weight: bold;
         }
 
         .section {
             display: none;
+            min-height: 100vh;
         }
 
         .section.active {
             display: block;
         }
 
-        .hero {
-            text-align: center;
-            padding: 4rem 0;
-            color: white;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .search-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .search-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 1rem;
-            align-items: end;
-        }
-
-        .form-group {
+        .hero-section {
+            height: 80vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1489599006549-b2e6c5e62928?w=1920') center/cover;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            position: relative;
         }
 
-        .form-group label {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #555;
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4%;
+            width: 100%;
         }
 
-        .form-group select,
-        .form-group input {
-            padding: 0.8rem;
-            border: 2px solid #e1e1e1;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
-        .form-group select:focus,
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
+        .hero-description {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.4;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+        .content-section {
+            padding: 4rem 0;
+            background: #141414;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4%;
         }
 
-        .results-grid {
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+
+        .movies-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
+            margin-bottom: 3rem;
         }
 
         .movie-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 1.5rem;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
+            background: #222;
+            border-radius: 8px;
             overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
-        }
-
-        .movie-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            position: relative;
         }
 
         .movie-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .movie-info {
+            padding: 1.5rem;
         }
 
         .movie-title {
             font-size: 1.3rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
-            color: #333;
         }
 
-        .movie-info {
-            color: #666;
+        .movie-meta {
+            color: #999;
             margin-bottom: 1rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
         }
 
-        .rating {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .stars {
-            color: #ffd700;
-            font-size: 1.2rem;
-        }
-
-        .platforms {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .platform-tag {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        .movie-rating {
+            display: inline-block;
+            background: #e50914;
             color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            border-radius: 4px;
             font-size: 0.8rem;
-            font-weight: 500;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .movie-description {
+            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .movie-actions {
             display: flex;
             gap: 0.5rem;
-            margin-top: 1rem;
         }
 
-        .btn-watch, .btn-add-list, .btn-like {
+        .btn-action {
             border: none;
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
             transition: all 0.3s;
-            flex: 1;
+            font-size: 0.9rem;
         }
 
-        .btn-watch {
-            background: #28a745;
+        .btn-primary {
+            background: #e50914;
             color: white;
         }
 
-        .btn-add-list {
-            background: #007bff;
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
             color: white;
         }
 
-        .btn-like {
-            background: #dc3545;
-            color: white;
+        .btn-action:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
         }
 
-        .btn-like.liked {
-            background: #ff4757;
+        .search-bar {
+            width: 100%;
+            padding: 1rem;
+            background: #333;
+            border: 2px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            background: #333;
+            color: white;
+            border: 2px solid #444;
+            padding: 0.7rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #e50914;
         }
 
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
         }
 
         .modal-content {
-            background-color: white;
+            background: #141414;
             margin: 2% auto;
-            padding: 2rem;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90%;
+            padding: 0;
+            width: 95%;
+            max-width: 1000px;
+            border-radius: 8px;
+            overflow: hidden;
+            max-height: 95vh;
             overflow-y: auto;
         }
 
         .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: black;
-        }
-
-        .movie-detail {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .movie-trailer {
-            width: 100%;
-            height: 400px;
-            border-radius: 15px;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
             color: white;
-            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
         }
 
-        .movie-meta {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
+        .movie-detail-header {
+            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(20,20,20,1));
+            position: relative;
+            display: flex;
+            align-items: flex-end;
         }
 
-        .comments-section {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 2px solid #eee;
+        .movie-detail-content {
+            padding: 2rem;
+            width: 50%;
         }
 
-        .comment {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 10px;
+        .detail-title {
+            font-size: 3rem;
+            font-weight: bold;
             margin-bottom: 1rem;
         }
 
-        .comment-author {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 0.5rem;
+        .detail-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            color: #999;
         }
 
-        .comment-form {
-            display: flex;
-            gap: 1rem;
+        .detail-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .trailer-container {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 2rem;
+        }
+
+        .trailer-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .platforms-section {
+            background: #222;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
             margin-top: 1rem;
         }
 
-        .comment-input {
-            flex: 1;
-            padding: 0.8rem;
-            border: 2px solid #e1e1e1;
-            border-radius: 10px;
-            resize: vertical;
+        .platform-card {
+            background: #333;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
         }
 
-        .watchlist-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        .platform-logo {
+            font-size: 2rem;
+            margin-bottom: 1rem;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
+        .platform-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
         }
 
-        .page-btn {
-            background: white;
-            border: 2px solid #667eea;
-            color: #667eea;
-            padding: 0.5rem 1rem;
-            border-radius: 10px;
+        .platform-prices {
+            margin-bottom: 1.5rem;
+        }
+
+        .price-option {
+            margin-bottom: 0.5rem;
+            color: #ccc;
+        }
+
+        .btn-subscribe {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 0.5rem;
         }
 
-        .page-btn:hover, .page-btn.active {
-            background: #667eea;
+        .btn-subscribe:hover {
+            background: #f40612;
+        }
+
+        .adsense-banner {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin: 3rem 0;
+            border-radius: 8px;
+        }
+
+        .adsense-rectangle {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            max-width: 336px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .auth-form {
+            background: #222;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ccc;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: #333;
+            border: 2px solid #444;
+            border-radius: 4px;
             color: white;
         }
 
+        .form-group input:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
         @media (max-width: 768px) {
-            .search-form {
-                grid-template-columns: 1fr;
+            .hero-title {
+                font-size: 2.5rem;
             }
             
-            .hero h1 {
+            .nav-links {
+                display: none;
+            }
+            
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+            
+            .detail-title {
                 font-size: 2rem;
             }
             
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .movie-meta {
-                grid-template-columns: 1fr;
-            }
-
-            .movie-actions {
-                flex-direction: column;
+            .movie-detail-content {
+                width: 100%;
+                padding: 1rem;
             }
         }
 
-        .login-form, .register-form {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
         }
 
-        .form-title {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: #333;
-            font-size: 1.8rem;
-            font-weight: bold;
+        .spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #e50914;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="nav-container">
+            <div style="display: flex; align-items: center;">
                 <div class="logo" onclick="showSection('home')">FilmKolik</div>
                 <nav>
                     <ul class="nav-links">
@@ -637,16 +558,16 @@
                         <li><a onclick="showSection('watchlist')">İzleme Listem</a></li>
                     </ul>
                 </nav>
-                <div class="user-menu">
-                    <div class="auth-buttons">
-                        <button class="btn-login" onclick="showLogin()">Giriş Yap</button>
-                        <button class="btn-register" onclick="showRegister()">Kayıt Ol</button>
-                    </div>
-                    <div class="user-info" id="userInfo">
-                        <div class="user-avatar" id="userAvatar"></div>
-                        <span id="userName"></span>
-                        <button class="btn-login" onclick="logout()">Çıkış</button>
-                    </div>
+            </div>
+            <div class="user-area">
+                <div class="auth-buttons">
+                    <button class="btn-auth" onclick="showLogin()">Giriş Yap</button>
+                    <button class="btn-auth" onclick="showRegister()">Kayıt Ol</button>
+                </div>
+                <div class="user-profile" id="userProfile">
+                    <span id="userName"></span>
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <button class="btn-auth" onclick="logout()">Çıkış</button>
                 </div>
             </div>
         </div>
@@ -654,158 +575,141 @@
 
     <!-- Ana Sayfa -->
     <div id="home" class="section active">
-        <section class="hero">
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Sınırsız film, dizi ve belgesel</h1>
+                <p class="hero-description">İstediğin her yerde izle. İstediğin zaman iptal et. En popüler içerikler ve kişisel öneriler seni bekliyor.</p>
+                <div class="filters" style="margin-top: 2rem;">
+                    <select class="filter-select" id="homeGenre">
+                        <option value="">Tür Seçin</option>
+                        <option value="action">Aksiyon</option>
+                        <option value="comedy">Komedi</option>
+                        <option value="drama">Dram</option>
+                        <option value="horror">Korku</option>
+                        <option value="romance">Romantik</option>
+                        <option value="sci-fi">Bilim Kurgu</option>
+                        <option value="thriller">Gerilim</option>
+                        <option value="fantasy">Fantastik</option>
+                        <option value="crime">Suç</option>
+                    </select>
+                    <select class="filter-select" id="homeType">
+                        <option value="">Tümü</option>
+                        <option value="movie">Filmler</option>
+                        <option value="series">Diziler</option>
+                    </select>
+                    <button class="btn-action btn-primary" onclick="filterHomeContent()">Filtrele</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-section">
             <div class="container">
-                <h1>Kişisel Film ve Dizi Önerilerin</h1>
-                <p>Zevklerine uygun filmler ve diziler keşfet, hangi platformda izleyeceğini öğren!</p>
-            </div>
-        </section>
-
-        <div class="container">
-            <div class="search-section">
-                <h2 style="margin-bottom: 2rem; color: #333;">Film/Dizi Ara ve Öneri Al</h2>
-                <form class="search-form" id="searchForm">
-                    <div class="form-group">
-                        <label for="genre">Tür Seçin</label>
-                        <select id="genre" name="genre">
-                            <option value="">Tüm Türler</option>
-                            <option value="aksiyon">Aksiyon</option>
-                            <option value="komedi">Komedi</option>
-                            <option value="dram">Dram</option>
-                            <option value="korku">Korku</option>
-                            <option value="romantik">Romantik</option>
-                            <option value="bilimkurgu">Bilim Kurgu</option>
-                            <option value="gerilim">Gerilim</option>
-                            <option value="belgesel">Belgesel</option>
-                            <option value="animasyon">Animasyon</option>
-                            <option value="fantastik">Fantastik</option>
-                        </select>
+                <!-- AdSense Banner -->
+                <div class="adsense-banner">
+                    <h3>🚀 GOOGLE ADSENSE BANNER - 728x90</h3>
+                    <p>Yüksek CTR alan - Premium reklam konumu</p>
+                    <div style="background: rgba(255,255,255,0.2); height: 90px; margin: 1rem auto; max-width: 728px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                        AdSense Banner Reklamı Buraya Gelecek
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="type">İçerik Tipi</label>
-                        <select id="type" name="type">
-                            <option value="">Hepsi</option>
-                            <option value="film">Film</option>
-                            <option value="dizi">Dizi</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="rating">Minimum Puan</label>
-                        <select id="rating" name="rating">
-                            <option value="">Farketmez</option>
-                            <option value="9">9.0+</option>
-                            <option value="8">8.0+</option>
-                            <option value="7">7.0+</option>
-                            <option value="6">6.0+</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn-primary">Önerileri Getir</button>
-                </form>
-            </div>
-
-            <div class="search-section">
-                <h2 style="color: #333; margin-bottom: 1rem;">Önerilen İçerikler</h2>
-                <div class="results-grid" id="homeResults"></div>
+                </div>
+                
+                <h2 class="section-title">🔥 Popüler İçerikler</h2>
+                <div class="movies-grid" id="homeContent"></div>
             </div>
         </div>
     </div>
 
-    <!-- Filmler Sayfası -->
+    <!-- Filmler -->
     <div id="movies" class="section">
-        <div class="container" style="margin-top: 2rem;">
-            <div class="search-section">
-                <h2 style="color: #333; margin-bottom: 2rem;">🎬 Tüm Filmler</h2>
-                <div class="form-group" style="margin-bottom: 2rem;">
-                    <input type="text" id="movieSearch" placeholder="Film ara..." style="width: 100%; padding: 1rem; border: 2px solid #e1e1e1; border-radius: 10px; font-size: 1rem;">
+        <div class="content-section" style="padding-top: 8rem;">
+            <div class="container">
+                <h1 class="section-title">🎬 Filmler</h1>
+                <input type="text" class="search-bar" id="movieSearch" placeholder="Film ara...">
+                <div class="filters">
+                    <select class="filter-select" id="movieGenre">
+                        <option value="">Tüm Türler</option>
+                        <option value="action">Aksiyon</option>
+                        <option value="comedy">Komedi</option>
+                        <option value="drama">Dram</option>
+                        <option value="horror">Korku</option>
+                        <option value="romance">Romantik</option>
+                        <option value="sci-fi">Bilim Kurgu</option>
+                        <option value="thriller">Gerilim</option>
+                        <option value="fantasy">Fantastik</option>
+                        <option value="crime">Suç</option>
+                    </select>
+                    <select class="filter-select" id="movieYear">
+                        <option value="">Tüm Yıllar</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                    </select>
+                    <select class="filter-select" id="movieRating">
+                        <option value="">Tüm Puanlar</option>
+                        <option value="9">9.0+</option>
+                        <option value="8">8.0+</option>
+                        <option value="7">7.0+</option>
+                        <option value="6">6.0+</option>
+                    </select>
                 </div>
-                <div class="results-grid" id="moviesResults"></div>
-                <div class="pagination" id="moviesPagination"></div>
+                <div class="movies-grid" id="moviesContent"></div>
+                
+                <!-- AdSense Rectangle -->
+                <div class="adsense-rectangle">
+                    <h4>📱 ADSENSE RECTANGLE - 336x280</h4>
+                    <p>Mobil uyumlu premium alan</p>
+                    <div style="background: rgba(255,255,255,0.2); height: 200px; margin: 1rem auto; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                        AdSense Rectangle Reklamı
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Diziler Sayfası -->
+    <!-- Diziler -->
     <div id="series" class="section">
-        <div class="container" style="margin-top: 2rem;">
-            <div class="search-section">
-                <h2 style="color: #333; margin-bottom: 2rem;">📺 Tüm Diziler</h2>
-                <div class="form-group" style="margin-bottom: 2rem;">
-                    <input type="text" id="seriesSearch" placeholder="Dizi ara..." style="width: 100%; padding: 1rem; border: 2px solid #e1e1e1; border-radius: 10px; font-size: 1rem;">
+        <div class="content-section" style="padding-top: 8rem;">
+            <div class="container">
+                <h1 class="section-title">📺 Diziler</h1>
+                <input type="text" class="search-bar" id="seriesSearch" placeholder="Dizi ara...">
+                <div class="filters">
+                    <select class="filter-select" id="seriesGenre">
+                        <option value="">Tüm Türler</option>
+                        <option value="action">Aksiyon</option>
+                        <option value="comedy">Komedi</option>
+                        <option value="drama">Dram</option>
+                        <option value="horror">Korku</option>
+                        <option value="romance">Romantik</option>
+                        <option value="sci-fi">Bilim Kurgu</option>
+                        <option value="thriller">Gerilim</option>
+                        <option value="fantasy">Fantastik</option>
+                        <option value="crime">Suç</option>
+                    </select>
+                    <select class="filter-select" id="seriesStatus">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="ongoing">Devam Ediyor</option>
+                        <option value="completed">Tamamlandı</option>
+                        <option value="cancelled">İptal Edildi</option>
+                    </select>
                 </div>
-                <div class="results-grid" id="seriesResults"></div>
-                <div class="pagination" id="seriesPagination"></div>
+                <div class="movies-grid" id="seriesContent"></div>
             </div>
         </div>
     </div>
 
     <!-- İzleme Listem -->
     <div id="watchlist" class="section">
-        <div class="container" style="margin-top: 2rem;">
-            <div class="watchlist-section">
-                <h2 style="color: #333; margin-bottom: 2rem;">📚 İzleme Listem</h2>
-                <div id="watchlistEmpty" style="text-align: center; color: #666; padding: 3rem;">
-                    <p>İzleme listeniz boş. Film ve dizileri ekleyerek kişisel listenizi oluşturun!</p>
+        <div class="content-section" style="padding-top: 8rem;">
+            <div class="container">
+                <h1 class="section-title">📚 İzleme Listem</h1>
+                <div id="watchlistEmpty" class="empty-state">
+                    <h3>📝 Liste boş</h3>
+                    <p>İzlemek istediğin film ve dizileri listeye ekleyerek kişisel koleksiyonunu oluştur!</p>
+                    <button class="btn-action btn-primary" onclick="showSection('movies')" style="margin-top: 1rem;">Film ve Dizileri Keşfet</button>
                 </div>
-                <div class="results-grid" id="watchlistResults"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Giriş Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModals()">&times;</span>
-            <div class="login-form">
-                <h2 class="form-title">Giriş Yap</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginEmail">E-mail</label>
-                        <input type="email" id="loginEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Şifre</label>
-                        <input type="password" id="loginPassword" required>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Giriş Yap</button>
-                </form>
-                <p style="text-align: center; margin-top: 1rem;">
-                    Hesabınız yok mu? <a href="#" onclick="showRegister()">Kayıt olun</a>
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Kayıt Modal -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModals()">&times;</span>
-            <div class="register-form">
-                <h2 class="form-title">Kayıt Ol</h2>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="registerName">Ad Soyad</label>
-                        <input type="text" id="registerName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail">E-mail</label>
-                        <input type="email" id="registerEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Şifre</label>
-                        <input type="password" id="registerPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPasswordConfirm">Şifre Tekrar</label>
-                        <input type="password" id="registerPasswordConfirm" required>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Kayıt Ol</button>
-                </form>
-                <p style="text-align: center; margin-top: 1rem;">
-                    Zaten hesabınız var mı? <a href="#" onclick="showLogin()">Giriş yapın</a>
-                </p>
+                <div class="movies-grid" id="watchlistContent"></div>
             </div>
         </div>
     </div>
@@ -813,476 +717,132 @@
     <!-- Film/Dizi Detay Modal -->
     <div id="detailModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModals()">&times;</span>
-            <div id="movieDetail" class="movie-detail"></div>
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="movieDetail"></div>
+        </div>
+    </div>
+
+    <!-- Giriş Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content" style="max-width: 450px; margin: 5% auto; padding: 2rem;">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="auth-form">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: white;">Giriş Yap</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Şifre</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn-action btn-primary" style="width: 100%; padding: 1rem;">Giriş Yap</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem; color: #ccc;">
+                    Hesabın yok mu? <a href="#" onclick="showRegister()" style="color: #e50914;">Kayıt ol</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kayıt Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content" style="max-width: 450px; margin: 5% auto; padding: 2rem;">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="auth-form">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: white;">Kayıt Ol</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label>Ad Soyad</label>
+                        <input type="text" id="registerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Şifre</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <button type="submit" class="btn-action btn-primary" style="width: 100%; padding: 1rem;">Kayıt Ol</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem; color: #ccc;">
+                    Zaten hesabın var mı? <a href="#" onclick="showLogin()" style="color: #e50914;">Giriş yap</a>
+                </p>
+            </div>
         </div>
     </div>
 
     <script>
-        // Global değişkenler
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-        let watchlist = JSON.parse(localStorage.getItem('watchlist_' + (currentUser?.email || 'guest'))) || [];
-        let likedMovies = JSON.parse(localStorage.getItem('liked_' + (currentUser?.email || 'guest'))) || [];
+        // Global değişkenler (artifact'ta localStorage çalışmadığı için memory'de tutuyoruz)
+        let currentUser = null;
+        let users = [];
+        let watchlist = [];
 
-        // Genişletilmiş film/dizi veritabanı
-        const allMovies = [
-            // POPÜLER FİLMLER
+        // Geniş film/dizi veritabanı
+        const allContent = [
+            // Popüler Filmler
             {
-                id: 1, title: "The Shawshank Redemption", type: "film", genre: "dram", rating: 9.3, year: 1994,
-                description: "Haksız yere hapse atılan bir bankacının hapishanedeki yaşam mücadelesi.",
-                platforms: ["Netflix", "Amazon Prime"], prices: {"Netflix": "₺29.99/ay", "Amazon Prime": "₺34.90/ay"},
-                trailer: "https://www.youtube.com/embed/6hB3S9bIaco", director: "Frank Darabont",
-                cast: ["Tim Robbins", "Morgan Freeman"], duration: "142 dk"
-            },
-            {
-                id: 2, title: "The Dark Knight", type: "film", genre: "aksiyon", rating: 9.0, year: 2008,
-                description: "Batman'in Joker ile mücadelesini konu alan süper kahraman filmi.",
-                platforms: ["Netflix", "HBO Max"], prices: {"Netflix": "₺29.99/ay", "HBO Max": "₺39.99/ay"},
-                trailer: "https://www.youtube.com/embed/EXeTwQWrcwY", director: "Christopher Nolan",
-                cast: ["Christian Bale", "Heath Ledger"], duration: "152 dk"
-            },
-            {
-                id: 3, title: "Inception", type: "film", genre: "bilimkurgu", rating: 8.8, year: 2010,
-                description: "Rüya içinde rüya konseptini kullanan aksiyon dolu bilim kurgu filmi.",
-                platforms: ["Amazon Prime"], prices: {"Amazon Prime": "₺34.90/ay"},
-                trailer: "https://www.youtube.com/embed/YoHD9XEInc0", director: "Christopher Nolan",
-                cast: ["Leonardo DiCaprio", "Marion Cotillard"], duration: "148 dk"
+                id: 1,
+                title: "Avatar: The Way of Water",
+                type: "movie",
+                genre: "sci-fi",
+                year: 2022,
+                rating: 7.6,
+                duration: "192 dk",
+                description: "Jake Sully ve ailesinin Pandora'daki yeni maceraları. Suya dayalı klanlar ve yeni tehditlerle dolu epik devam filmi.",
+                director: "James Cameron",
+                cast: ["Sam Worthington", "Zoe Saldana", "Sigourney Weaver"],
+                trailer: "https://www.youtube.com/embed/d9MyW72ELq0",
+                platforms: [
+                    { name: "Disney+", monthly: "₺34.99", yearly: "₺349.99", logo: "🏰" },
+                    { name: "Amazon Prime", monthly: "₺34.90", yearly: "₺349.00", logo: "📦" }
+                ],
+                poster: "🌊"
             },
             {
-                id: 4, title: "Forrest Gump", type: "film", genre: "dram", rating: 8.8, year: 1994,
-                description: "Yaşam hikayesiyle kalpleri dokunan unutulmaz dram.",
-                platforms: ["Netflix", "Disney+"], prices: {"Netflix": "₺29.99/ay", "Disney+": "₺34.99/ay"},
-                trailer: "https://www.youtube.com/embed/bLvqoHBptjg", director: "Robert Zemeckis",
-                cast: ["Tom Hanks", "Robin Wright"], duration: "142 dk"
+                id: 2,
+                title: "Top Gun: Maverick",
+                type: "movie",
+                genre: "action",
+                year: 2022,
+                rating: 8.3,
+                duration: "130 dk",
+                description: "Pete 'Maverick' Mitchell, 30 yıl sonra Top Gun programına geri döner ve yeni nesil pilotları eğitir.",
+                director: "Joseph Kosinski",
+                cast: ["Tom Cruise", "Miles Teller", "Jennifer Connelly"],
+                trailer: "https://www.youtube.com/embed/qSqVVswa420",
+                platforms: [
+                    { name: "Netflix", monthly: "₺29.99", yearly: "₺299.99", logo: "🔴" },
+                    { name: "Amazon Prime", monthly: "₺34.90", yearly: "₺349.00", logo: "📦" }
+                ],
+                poster: "✈️"
             },
             {
-                id: 5, title: "Pulp Fiction", type: "film", genre: "suç", rating: 8.9, year: 1994,
-                description: "Tarantino'nun kült haline gelen suç filmi.",
-                platforms: ["Netflix"], prices: {"Netflix": "₺29.99/ay"},
-                trailer: "https://www.youtube.com/embed/s7EdQ4FqbhY", director: "Quentin Tarantino",
-                cast: ["John Travolta", "Uma Thurman"], duration: "154 dk"
+                id: 3,
+                title: "The Batman",
+                type: "movie",
+                genre: "action",
+                year: 2022,
+                rating: 7.8,
+                duration: "176 dk",
+                description: "Genç Bruce Wayne'in Batman olarak ikinci yılında, Riddler'ın Gotham'a yönelik tehdidiyle mücadelesi.",
+                director: "Matt Reeves",
+                cast: ["Robert Pattinson", "Zoë Kravitz", "Jeffrey Wright"],
+                trailer: "https://www.youtube.com/embed/mqqft2x_Aa4",
+                platforms: [
+                    { name: "HBO Max", monthly: "₺39.99", yearly: "₺399.99", logo: "🎬" },
+                    { name: "Netflix", monthly: "₺29.99", yearly: "₺299.99", logo: "🔴" }
+                ],
+                poster: "🦇"
             },
             {
-                id: 6, title: "The Matrix", type: "film", genre: "bilimkurgu", rating: 8.7, year: 1999,
-                description: "Sanal gerçeklik konseptini popüler hale getiren efsane film.",
-                platforms: ["HBO Max"], prices: {"HBO Max": "₺39.99/ay"},
-                trailer: "https://www.youtube.com/embed/vKQi3bBA1y8", director: "Wachowski Kardeşler",
-                cast: ["Keanu Reeves", "Laurence Fishburne"], duration: "136 dk"
-            },
-            {
-                id: 7, title: "Interstellar", type: "film", genre: "bilimkurgu", rating: 8.6, year: 2014,
-                description: "Uzay ve zaman yolculuğunu konu alan etkileyici film.",
-                platforms: ["Netflix"], prices: {"Netflix": "₺29.99/ay"},
-                trailer: "https://www.youtube.com/embed/zSWdZVtXT7E", director: "Christopher Nolan",
-                cast: ["Matthew McConaughey", "Anne Hathaway"], duration: "169 dk"
-            },
-            {
-                id: 8, title: "Avatar", type: "film", genre: "bilimkurgu", rating: 7.8, year: 2009,
-                description: "Pandora gezegeninde geçen görsel şölen.",
-                platforms: ["Disney+"], prices: {"Disney+": "₺34.99/ay"},
-                trailer: "https://www.youtube.com/embed/5PSNL1qE6VY", director: "James Cameron",
-                cast: ["Sam Worthington", "Zoe Saldana"], duration: "162 dk"
-            },
-            {
-                id: 9, title: "Avengers: Endgame", type: "film", genre: "aksiyon", rating: 8.4, year: 2019,
-                description: "Marvel Cinematic Universe'nin epik finali.",
-                platforms: ["Disney+"], prices: {"Disney+": "₺34.99/ay"},
-                trailer: "https://www.youtube.com/embed/TcMBFSGVi1c", director: "Russo Kardeşler",
-                cast: ["Robert Downey Jr.", "Chris Evans"], duration: "181 dk"
-            },
-            {
-                id: 10, title: "Parasite", type: "film", genre: "gerilim", rating: 8.6, year: 2019,
-                description: "Oscar ödüllü Güney Kore yapımı kara komedi.",
-                platforms: ["HBO Max"], prices: {"HBO Max": "₺39.99/ay"},
-                trailer: "https://www.youtube.com/embed/5xH0HfJHsaY", director: "Bong Joon-ho",
-                cast: ["Kang-ho Song", "Sun-kyun Lee"], duration: "132 dk"
-            },
-
-            // POPÜLER DİZİLER
-            {
-                id: 11, title: "Breaking Bad", type: "dizi", genre: "dram", rating: 9.5, year: 2008,
-                description: "Kimya öğretmeni Walter White'ın uyuşturucu dünyasına giriş hikayesi.",
-                platforms: ["Netflix"], prices: {"Netflix": "₺29.99/ay"},
-                trailer: "https://www.youtube.com/embed/HhesaQXLuRY", creator: "Vince Gilligan",
-                cast: ["Bryan Cranston", "Aaron Paul"], seasons: "5 Sezon"
-            },
-            {
-                id: 12, title: "Game of Thrones", type: "dizi", genre: "fantastik", rating: 9.3, year: 2011,
-                description: "Westeros kıtasında geçen epik fantastik dizi.",
-                platforms: ["HBO Max"], prices: {"HBO Max": "₺39.99/ay"},
-                trailer: "https://www.youtube.com/embed/rlR4PJn8b8I", creator: "David Benioff",
-                cast: ["Emilia Clarke", "Kit Harington"], seasons: "8 Sezon"
-            },
-            {
-                id: 13, title: "Stranger Things", type: "dizi", genre: "korku", rating: 8.7, year: 2016,
-                description: "1980'lerde küçük kasabada yaşanan paranormal olaylar.",
-                platforms: ["Netflix"], prices: {"Netflix": "₺29.99/ay", "Netflix_yearly": "₺299.99/yıl"},
-                trailer: "https://www.youtube.com/embed/b9EkMc79ZSU", creator: "Duffer Brothers",
-                cast: ["Millie Bobby Brown", "Finn Wolfhard"], seasons: "4 Sezon"
-            },
-            {
-                id: 14, title: "The Mandalorian", type: "dizi", genre: "bilimkurgu", rating: 8.7, year: 2019,
-                description: "Star Wars evreninde geçen space western dizisi.",
-                platforms: ["Disney+"], prices: {"Disney+": "₺34.99/ay", "Disney+_yearly": "₺349.99/yıl"},
-                trailer: "https://www.youtube.com/embed/aOC8E8z_ifw", creator: "Jon Favreau",
-                cast: ["Pedro Pascal", "Gina Carano"], seasons: "3 Sezon"
-            },
-            {
-                id: 15, title: "The Office", type: "dizi", genre: "komedi", rating: 8.7, year: 2005,
-                description: "Ofis hayatını komik bir şekilde anlatan mockumentary dizi.",
-                platforms: ["Amazon Prime"], prices: {"Amazon Prime": "₺34.90/ay", "Amazon Prime_yearly": "₺349.00/yıl"},
-                trailer: "https://www.youtube.com/embed/LHOtME2DL4g", creator: "Greg Daniels",
-                cast: ["Steve Carell", "John Krasinski"], seasons: "9 Sezon"
-            },
-            {
-                id: 16, title: "House of Cards", type: "dizi", genre: "dram", rating: 8.6, year: 2013,
-                description: "Siyasi intrikalara odaklanan Netflix orijinal dizisi.",
-                platforms: ["Netflix"], prices: {"Netflix": "₺29.99/ay", "Netflix_yearly": "₺299.99/yıl"},
-                trailer: "https://www.youtube.com/embed/NTzycsqxYJ0", creator: "Beau Willimon",
-                cast: ["Kevin Spacey", "Robin Wright"], seasons: "6 Sezon"
-            },
-            {
-                id: 17, title: "The Crown", type: "dizi", genre: "dram", rating: 8.6, year: 2016,
-                description: "İngiliz Kraliyet ailesinin hikayesi.",
-                platforms: ["Netflix"], prices: {"Netflix": "₺29.99/ay", "Netflix_yearly": "₺299.99/yıl"},
-                trailer: "https://www.youtube.com/embed/JWtnJjn6ng0", creator: "Peter Morgan",
-                cast: ["Claire Foy", "Olivia Colman"], seasons: "6 Sezon"
-            },
-            {
-                id: 18, title: "Money Heist", type: "dizi", genre: "suç", rating: 8.3, year: 2017,
-                description: "İspanya Baskısı - Darphane soygunu hikayesi.",
-                platforms: ["Netflix"], prices: {"Netflix": "₺29.99/ay", "Netflix_yearly": "₺299.99/yıl"},
-                trailer: "https://www.youtube.com/embed/_InqQJRqGW4", creator: "Álex Pina",
-                cast: ["Álvaro Morte", "Úrsula Corberó"], seasons: "5 Sezon"
-            }
-        ];
-
-        // Platform fiyatları (aylık ve yıllık)
-        const platformPrices = {
-            "Netflix": {
-                monthly: "₺29.99",
-                yearly: "₺299.99",
-                yearlyDiscount: "17% indirim",
-                logo: "🔴"
-            },
-            "Disney+": {
-                monthly: "₺34.99", 
-                yearly: "₺349.99",
-                yearlyDiscount: "17% indirim", 
-                logo: "🏰"
-            },
-            "Amazon Prime": {
-                monthly: "₺34.90",
-                yearly: "₺349.00", 
-                yearlyDiscount: "16% indirim",
-                logo: "📦"
-            },
-            "HBO Max": {
-                monthly: "₺39.99",
-                yearly: "₺399.99",
-                yearlyDiscount: "17% indirim",
-                logo: "🎬"
-            },
-            "Apple TV+": {
-                monthly: "₺39.99",
-                yearly: "₺399.99", 
-                yearlyDiscount: "17% indirim",
-                logo: "🍎"
-            }
-        };
-
-        // Reklam alanları HTML
-        const adsenseSlots = {
-            banner: `
-                <div style="background: linear-gradient(135deg, #4285f4, #34a853); color: white; border-radius: 15px; padding: 2rem; text-align: center; margin: 2rem 0; box-shadow: 0 8px 25px rgba(66, 133, 244, 0.3);">
-                    <h3>🚀 GOOGLE ADSENSE - BANNER 728x90</h3>
-                    <p>Yüksek CTR alanı - Tıklama başına $0.50-$2.00 kazanç</p>
-                    <div style="background: white; height: 90px; border-radius: 10px; margin: 1rem auto; max-width: 728px; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold;">
-                        AdSense Banner Reklamı Buraya Gelecek
-                    </div>
-                </div>
-            `,
-            rectangle: `
-                <div style="background: linear-gradient(135deg, #ff6b6b, #feca57); color: white; border-radius: 15px; padding: 1.5rem; text-align: center; margin: 2rem 0; box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);">
-                    <h4>📱 GOOGLE ADSENSE - MEDIUM RECTANGLE</h4>
-                    <p>300x250 - Mobil uyumlu yüksek kazanç alanı</p>
-                    <div style="background: white; height: 250px; width: 300px; border-radius: 10px; margin: 1rem auto; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; font-size: 0.9rem;">
-                        AdSense Rectangle<br>Reklamı Buraya<br>Gelecek
-                    </div>
-                </div>
-            `,
-            sidebar: `
-                <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 1.5rem; text-align: center; margin: 1rem 0; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
-                    <h4>📊 ADSENSE SIDEBAR</h4>
-                    <p style="font-size: 0.9rem;">160x600 - Sidebar reklamı</p>
-                    <div style="background: white; height: 200px; width: 160px; border-radius: 8px; margin: 1rem auto; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; font-size: 0.8rem; text-align: center;">
-                        AdSense<br>Sidebar<br>Reklamı
-                    </div>
-                </div>
-            `
-        };
-
-        // Sayfa başlatma
-        window.onload = function() {
-            checkLogin();
-            showHomeContent();
-        };
-
-        // Kullanıcı girişi kontrol
-        function checkLogin() {
-            if (currentUser) {
-                document.querySelector('.auth-buttons').style.display = 'none';
-                document.getElementById('userInfo').style.display = 'flex';
-                document.getElementById('userName').textContent = currentUser.name;
-                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
-            }
-        }
-
-        // Ana sayfa içeriği
-        function showHomeContent() {
-            const homeResults = document.getElementById('homeResults');
-            const popularMovies = allMovies.slice(0, 6);
-            homeResults.innerHTML = popularMovies.map(createMovieCard).join('') + adsenseSlots.rectangle;
-        }
-
-        // Film kartı oluşturma
-        function createMovieCard(movie) {
-            const isLiked = likedMovies.includes(movie.id);
-            const isInWatchlist = watchlist.some(item => item.id === movie.id);
-            
-            return `
-                <div class="movie-card" onclick="showMovieDetail(${movie.id})">
-                    <div class="movie-title">${movie.title}</div>
-                    <div class="movie-info">
-                        ${movie.year} • ${movie.type.charAt(0).toUpperCase() + movie.type.slice(1)} • ${movie.genre.charAt(0).toUpperCase() + movie.genre.slice(1)}
-                    </div>
-                    <div class="rating">
-                        <span class="stars">${generateStars(movie.rating)}</span>
-                        <span>${movie.rating}/10</span>
-                    </div>
-                    <p style="margin-bottom: 1rem; line-height: 1.5;">${movie.description}</p>
-                    <div class="platforms">
-                        ${movie.platforms.map(platform => `<span class="platform-tag">${platformPrices[platform]?.logo || '📺'} ${platform}</span>`).join('')}
-                    </div>
-                    <div class="movie-actions" onclick="event.stopPropagation()">
-                        <button class="btn-watch" onclick="showWatchOptions(${movie.id})">📺 İzle</button>
-                        <button class="btn-add-list ${isInWatchlist ? 'added' : ''}" onclick="toggleWatchlist(${movie.id})" style="background: ${isInWatchlist ? '#28a745' : '#007bff'}">
-                            ${isInWatchlist ? '✓ Listede' : '+ Liste'}
-                        </button>
-                        <button class="btn-like ${isLiked ? 'liked' : ''}" onclick="toggleLike(${movie.id})" style="background: ${isLiked ? '#ff4757' : '#dc3545'}">
-                            ${isLiked ? '❤️' : '🤍'}
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // İzleme seçenekleri göster
-        function showWatchOptions(movieId) {
-            const movie = allMovies.find(m => m.id === movieId);
-            if (!movie) return;
-
-            const platformsInfo = movie.platforms.map(platform => {
-                const priceInfo = platformPrices[platform];
-                return `
-                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 15px; margin-bottom: 1rem; border: 2px solid #e9ecef;">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="font-size: 2rem;">${priceInfo.logo}</div>
-                            <div>
-                                <h3 style="color: #333; margin-bottom: 0.5rem;">${platform}</h3>
-                                <div style="display: flex; gap: 2rem; align-items: center;">
-                                    <div>
-                                        <strong>Aylık:</strong> ${priceInfo.monthly}<br>
-                                        <strong>Yıllık:</strong> ${priceInfo.yearly} <span style="color: #28a745; font-weight: bold;">(${priceInfo.yearlyDiscount})</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 1rem;">
-                            <button onclick="subscribePlatform('${platform}', 'monthly', ${movie.id})" 
-                                style="background: #007bff; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: bold; flex: 1;">
-                                💳 Aylık Üyelik (${priceInfo.monthly})
-                            </button>
-                            <button onclick="subscribePlatform('${platform}', 'yearly', ${movie.id})" 
-                                style="background: #28a745; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: bold; flex: 1;">
-                                🎯 Yıllık Üyelik (${priceInfo.yearly})
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            const modalContent = `
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <h2 style="color: #333; margin-bottom: 1rem;">📺 "${movie.title}" İzleme Seçenekleri</h2>
-                    <p style="color: #666;">Bu ${movie.type === 'film' ? 'filmi' : 'diziyi'} izlemek için aşağıdaki platformlardan birini seçin:</p>
-                </div>
-                ${platformsInfo}
-                <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 15px; text-align: center; margin-top: 2rem;">
-                    <h4>💡 İpucu</h4>
-                    <p>Yıllık aboneliklerle %15-17 tasarruf edin! Ayrıca ilk ay deneme süreleri de mevcut.</p>
-                </div>
-            `;
-
-            document.getElementById('movieDetail').innerHTML = modalContent;
-            document.getElementById('detailModal').style.display = 'block';
-        }
-
-        // Platform abonelik işlemi
-        function subscribePlatform(platform, type, movieId) {
-            const movie = allMovies.find(m => m.id === movieId);
-            const priceInfo = platformPrices[platform];
-            const price = type === 'monthly' ? priceInfo.monthly : priceInfo.yearly;
-            
-            // Affiliate kazancı simülasyonu
-            const commission = type === 'yearly' ? 45 : 25; // Yıllık daha fazla komisyon
-            
-            alert(`🎉 BAŞARILI!\n\n${platform} ${type === 'monthly' ? 'aylık' : 'yıllık'} aboneliği: ${price}\n"${movie.title}" artık izlenebilir!\n\n💰 SİZİN KAZANCINIZ: ${commission} TL komisyon!`);
-            
-            // Gerçek affiliate linkine yönlendirme (örnek)
-            const affiliateLinks = {
-                'Netflix': 'https://netflix.com/tr-tr?ref=SENIN_AFFILIATE_KODUN',
-                'Disney+': 'https://disneyplus.com/tr-tr?ref=SENIN_AFFILIATE_KODUN', 
-                'Amazon Prime': 'https://primevideo.com/tr?ref=SENIN_AFFILIATE_KODUN',
-                'HBO Max': 'https://hbomax.com/tr?ref=SENIN_AFFILIATE_KODUN',
-                'Apple TV+': 'https://tv.apple.com/tr?ref=SENIN_AFFILIATE_KODUN'
-            };
-            
-            setTimeout(() => {
-                window.open(affiliateLinks[platform], '_blank');
-            }, 1000);
-            
-            closeModals();
-        }
-
-        // İzleme listesine ekle/çıkar
-        function toggleWatchlist(movieId) {
-            if (!currentUser) {
-                alert('İzleme listesi için giriş yapmalısınız!');
-                showLogin();
-                return;
-            }
-
-            const movie = allMovies.find(m => m.id === movieId);
-            const index = watchlist.findIndex(item => item.id === movieId);
-            
-            if (index === -1) {
-                watchlist.push(movie);
-                alert(`"${movie.title}" izleme listenize eklendi!`);
-            } else {
-                watchlist.splice(index, 1);
-                alert(`"${movie.title}" izleme listenizden çıkarıldı!`);
-            }
-            
-            localStorage.setItem('watchlist_' + currentUser.email, JSON.stringify(watchlist));
-            updateCurrentSection();
-        }
-
-        // Beğeni ekle/çıkar  
-        function toggleLike(movieId) {
-            if (!currentUser) {
-                alert('Beğeni için giriş yapmalısınız!');
-                showLogin();
-                return;
-            }
-
-            const movie = allMovies.find(m => m.id === movieId);
-            const index = likedMovies.indexOf(movieId);
-            
-            if (index === -1) {
-                likedMovies.push(movieId);
-                alert(`"${movie.title}" beğenildi! ❤️`);
-            } else {
-                likedMovies.splice(index, 1);  
-                alert(`"${movie.title}" beğeniden çıkarıldı.`);
-            }
-            
-            localStorage.setItem('liked_' + currentUser.email, JSON.stringify(likedMovies));
-            updateCurrentSection();
-        }
-
-        // Film detayını göster
-        function showMovieDetail(movieId) {
-            const movie = allMovies.find(m => m.id === movieId);
-            if (!movie) return;
-
-            const detailHTML = `
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <h2 style="color: #333;">${movie.title}</h2>
-                    <p style="color: #666;">${movie.year} • ${movie.genre} • ${movie.duration || movie.seasons}</p>
-                    <div class="rating">
-                        <span class="stars" style="font-size: 1.5rem;">${generateStars(movie.rating)}</span>
-                        <span style="font-size: 1.2rem; margin-left: 0.5rem;">${movie.rating}/10</span>
-                    </div>
-                </div>
-                
-                <div class="movie-trailer">
-                    <iframe width="100%" height="400" src="${movie.trailer}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                </div>
-                
-                <div class="movie-meta">
-                    <div>
-                        <h3 style="margin-bottom: 1rem; color: #333;">📝 Özet</h3>
-                        <p style="line-height: 1.6; margin-bottom: 2rem;">${movie.description}</p>
-                        
-                        <h3 style="margin-bottom: 1rem; color: #333;">🎭 Oyuncular</h3>
-                        <p style="margin-bottom: 2rem;">${movie.cast?.join(', ')}</p>
-                        
-                        <h3 style="margin-bottom: 1rem; color: #333;">🎬 ${movie.type === 'film' ? 'Yönetmen' : 'Yapımcı'}</h3>
-                        <p>${movie.director || movie.creator}</p>
-                    </div>
-                    
-                    <div>
-                        <h3 style="margin-bottom: 1rem; color: #333;">📺 İzleme Platformları</h3>
-                        <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            ${movie.platforms.map(platform => {
-                                const priceInfo = platformPrices[platform];
-                                return `
-                                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; text-align: center;">
-                                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">${priceInfo.logo}</div>
-                                        <strong>${platform}</strong><br>
-                                        <small>Aylık: ${priceInfo.monthly}</small><br>
-                                        <small>Yıllık: ${priceInfo.yearly}</small>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                        
-                        <div style="margin-top: 2rem;">
-                            <button onclick="showWatchOptions(${movie.id})" style="background: #28a745; color: white; border: none; padding: 1rem 2rem; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 1rem;">
-                                📺 İZLE
-                            </button>
-                            <button onclick="toggleWatchlist(${movie.id})" style="background: #007bff; color: white; border: none; padding: 1rem 2rem; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%;">
-                                + İZLEME LİSTESİNE EKLE  
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                ${adsenseSlots.rectangle}
-                
-                <div class="comments-section">
-                    <h3 style="color: #333; margin-bottom: 1rem;">💬 Yorumlar</h3>
-                    <div id="commentsContainer">
-                        <div class="comment">
-                            <div class="comment-author">🎬 FilmSever2023</div>
-                            <p>Harika bir ${movie.type}! Kesinlikle izlenmeli. Özellikle ${movie.cast?.[0]} muhteşem oyunculuk sergilemiş.</p>
-                        </div>
-                        <div class="comment">
-                            <div class="comment-author">🍿 SinemaTutkunu</div>
-                            <p>${movie.rating >= 8.5 ? 'Mükemmel bir yapım! Tekrar izleyeceğim.' : 'Güzel bir yapım, tavsiye ederim.'}</p>
-                        </div>
-                    </div>
-                    ${currentUser ? `
-                        <div class="comment-form">
-                            <textarea class="comment-input" placeholder="Yorumunuzu yazın..." rows="3"></textarea>
-                            <button onclick="addComment()" style="background: #667eea; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; cursor: pointer;">Yorum Yap</button>
-                        </div>
-                    ` : '<p style="color: #666; text-align: center; margin-top: 2rem;">Yorum yapmak için <a href="#" onclick="showLogin()">giriş yapın</a></p>'}
-                </div>
-            `;
-
-            document.getElementById('movieDetail').innerHTML = detailHTML;
-            document.getElementById('detailModal').style.display = 'block';
-        }
+                id: 4,
+                title: "Dune",
+                type: "movie",
+                genre: "sci-fi",
+                year: 2021,
+                rating: 8.0,
+                duration: "155 dk",
+                description: "Paul Atreides'in çöl gezegeni Arrakis'te geçen destanı
