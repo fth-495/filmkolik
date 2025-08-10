@@ -845,4 +845,596 @@
                 year: 2021,
                 rating: 8.0,
                 duration: "155 dk",
-                description: "Paul Atreides'in çöl gezegeni Arrakis'te geçen destanı
+                description: "Paul Atreides'in çöl gezegeni Arrakis'te geçen destansı yolculuğu.",
+                director: "Denis Villeneuve",
+                cast: ["Timothée Chalamet", "Rebecca Ferguson", "Oscar Isaac"],
+                trailer: "https://www.youtube.com/embed/8g18jFHCLXk",
+                platforms: [
+                    { name: "HBO Max", monthly: "₺39.99", yearly: "₺399.99", logo: "🎬" },
+                    { name: "Amazon Prime", monthly: "₺34.90", yearly: "₺349.00", logo: "📦" }
+                ],
+                poster: "🏜️"
+            },
+            // Popüler Diziler
+            {
+                id: 5,
+                title: "Stranger Things",
+                type: "series",
+                genre: "sci-fi",
+                year: 2016,
+                rating: 8.7,
+                seasons: "4 Sezon",
+                episodes: "42 Bölüm",
+                status: "completed",
+                description: "1980'lerde küçük kasabada yaşanan doğaüstü olaylar ve kayıp çocukların hikayesi.",
+                creator: "Duffer Brothers",
+                cast: ["Millie Bobby Brown", "Finn Wolfhard", "David Harbour"],
+                trailer: "https://www.youtube.com/embed/b9EkMc79ZSU",
+                platforms: [
+                    { name: "Netflix", monthly: "₺29.99", yearly: "₺299.99", logo: "🔴" }
+                ],
+                poster: "🔮"
+            },
+            {
+                id: 6,
+                title: "The Mandalorian",
+                type: "series",
+                genre: "sci-fi",
+                year: 2019,
+                rating: 8.7,
+                seasons: "3 Sezon",
+                episodes: "24 Bölüm", 
+                status: "ongoing",
+                description: "Star Wars evreninde geçen, ödül avcısı Mandalorian'ın macerası.",
+                creator: "Jon Favreau",
+                cast: ["Pedro Pascal", "Gina Carano", "Carl Weathers"],
+                trailer: "https://www.youtube.com/embed/aOC8E8z_ifw",
+                platforms: [
+                    { name: "Disney+", monthly: "₺34.99", yearly: "₺349.99", logo: "🏰" }
+                ],
+                poster: "⚔️"
+            },
+            {
+                id: 7,
+                title: "What If...?",
+                type: "series",
+                genre: "fantasy",
+                year: 2021,
+                rating: 7.4,
+                seasons: "2 Sezon",
+                episodes: "18 Bölüm",
+                status: "ongoing",
+                description: "Marvel evrenindeki karakterlerin alternatif hikayelerini anlatan animasyon dizi.",
+                creator: "A.C. Bradley",
+                cast: ["Jeffrey Wright", "Hayley Atwell", "Josh Brolin"],
+                trailer: "https://www.youtube.com/embed/x9D0uUKJ5KI",
+                platforms: [
+                    { name: "Disney+", monthly: "₺34.99", yearly: "₺349.99", logo: "🏰" }
+                ],
+                poster: "🌟"
+            },
+            {
+                id: 8,
+                title: "House of the Dragon",
+                type: "series",
+                genre: "fantasy",
+                year: 2022,
+                rating: 8.5,
+                seasons: "2 Sezon",
+                episodes: "18 Bölüm",
+                status: "ongoing",
+                description: "Game of Thrones'un 200 yıl öncesinde geçen Targaryen hanedanının hikayesi.",
+                creator: "Ryan J. Condal",
+                cast: ["Paddy Considine", "Emma D'Arcy", "Matt Smith"],
+                trailer: "https://www.youtube.com/embed/DotnJ7wyKns",
+                platforms: [
+                    { name: "HBO Max", monthly: "₺39.99", yearly: "₺399.99", logo: "🎬" }
+                ],
+                poster: "🐉"
+            },
+            {
+                id: 9,
+                title: "Wednesday",
+                type: "series", 
+                genre: "comedy",
+                year: 2022,
+                rating: 8.1,
+                seasons: "1 Sezon",
+                episodes: "8 Bölüm",
+                status: "ongoing",
+                description: "Wednesday Addams'ın Nevermore Academy'deki okul hayatı ve gizemleri.",
+                creator: "Alfred Gough",
+                cast: ["Jenna Ortega", "Emma Myers", "Enid Sinclair"],
+                trailer: "https://www.youtube.com/embed/Di310WS8zLk",
+                platforms: [
+                    { name: "Netflix", monthly: "₺29.99", yearly: "₺299.99", logo: "🔴" }
+                ],
+                poster: "🕷️"
+            },
+            {
+                id: 10,
+                title: "The Bear",
+                type: "series",
+                genre: "drama",
+                year: 2022,
+                rating: 8.7,
+                seasons: "3 Sezon", 
+                episodes: "28 Bölüm",
+                status: "ongoing",
+                description: "Chicago'da sandwich dükkanı işleten genç şefin hikayesi.",
+                creator: "Christopher Storer",
+                cast: ["Jeremy Allen White", "Ebon Moss-Bachrach", "Ayo Edebiri"],
+                trailer: "https://www.youtube.com/embed/y-cqqAJIXhs",
+                platforms: [
+                    { name: "Disney+", monthly: "₺34.99", yearly: "₺349.99", logo: "🏰" }
+                ],
+                poster: "🍖"
+            }
+        ];
+
+        // Sayfa yüklendikinde
+        window.addEventListener('load', function() {
+            initializePage();
+            loadHomeContent();
+        });
+
+        // Scroll efekti
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Sayfa başlatma
+        function initializePage() {
+            checkUserLogin();
+            setupEventListeners();
+        }
+
+        // Event listener'ları ayarla
+        function setupEventListeners() {
+            // Arama çubukları
+            document.getElementById('movieSearch').addEventListener('input', searchMovies);
+            document.getElementById('seriesSearch').addEventListener('input', searchSeries);
+            
+            // Filtreler
+            document.getElementById('movieGenre').addEventListener('change', filterMovies);
+            document.getElementById('movieYear').addEventListener('change', filterMovies);
+            document.getElementById('movieRating').addEventListener('change', filterMovies);
+            
+            document.getElementById('seriesGenre').addEventListener('change', filterSeries);
+            document.getElementById('seriesStatus').addEventListener('change', filterSeries);
+            
+            // Formlar
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            
+            // Modal kapatma
+            window.addEventListener('click', function(e) {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Kullanıcı giriş kontrolü
+        function checkUserLogin() {
+            if (currentUser) {
+                document.querySelector('.auth-buttons').style.display = 'none';
+                document.getElementById('userProfile').style.display = 'flex';
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+            }
+        }
+
+        // Bölüm gösterme
+        function showSection(sectionName) {
+            // Tüm bölümleri gizle
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Seçili bölümü göster
+            document.getElementById(sectionName).classList.add('active');
+            
+            // İçeriği yükle
+            switch(sectionName) {
+                case 'home':
+                    loadHomeContent();
+                    break;
+                case 'movies':
+                    loadMoviesContent();
+                    break;
+                case 'series':
+                    loadSeriesContent();
+                    break;
+                case 'watchlist':
+                    loadWatchlistContent();
+                    break;
+            }
+        }
+
+        // Ana sayfa içeriği yükle
+        function loadHomeContent() {
+            const container = document.getElementById('homeContent');
+            const popularContent = allContent.slice(0, 8);
+            container.innerHTML = popularContent.map(createContentCard).join('');
+        }
+
+        // Film içeriği yükle
+        function loadMoviesContent() {
+            const container = document.getElementById('moviesContent');
+            const movies = allContent.filter(item => item.type === 'movie');
+            container.innerHTML = movies.map(createContentCard).join('');
+        }
+
+        // Dizi içeriği yükle
+        function loadSeriesContent() {
+            const container = document.getElementById('seriesContent');
+            const series = allContent.filter(item => item.type === 'series');
+            container.innerHTML = series.map(createContentCard).join('');
+        }
+
+        // İzleme listesi yükle
+        function loadWatchlistContent() {
+            if (!currentUser) {
+                document.getElementById('watchlistEmpty').style.display = 'block';
+                document.getElementById('watchlistContent').innerHTML = '';
+                return;
+            }
+
+            const container = document.getElementById('watchlistContent');
+            const emptyState = document.getElementById('watchlistEmpty');
+            
+            if (watchlist.length === 0) {
+                emptyState.style.display = 'block';
+                container.innerHTML = '';
+            } else {
+                emptyState.style.display = 'none';
+                container.innerHTML = watchlist.map(createContentCard).join('');
+            }
+        }
+
+        // İçerik kartı oluştur
+        function createContentCard(item) {
+            const isInWatchlist = watchlist.some(w => w.id === item.id);
+            const meta = item.type === 'movie' 
+                ? `${item.year} • ${item.duration}` 
+                : `${item.year} • ${item.seasons} • ${item.episodes}`;
+            
+            return `
+                <div class="movie-card" onclick="showContentDetail(${item.id})">
+                    <div class="movie-poster">${item.poster}</div>
+                    <div class="movie-info">
+                        <div class="movie-title">${item.title}</div>
+                        <div class="movie-meta">${meta}</div>
+                        <div class="movie-rating">⭐ ${item.rating}</div>
+                        <div class="movie-description">${item.description}</div>
+                        <div class="movie-actions" onclick="event.stopPropagation()">
+                            <button class="btn-action btn-primary" onclick="showContentDetail(${item.id})">
+                                📺 Detay
+                            </button>
+                            <button class="btn-action btn-secondary ${isInWatchlist ? 'added' : ''}" 
+                                    onclick="toggleWatchlist(${item.id})" 
+                                    style="background: ${isInWatchlist ? '#28a745' : 'rgba(255,255,255,0.2)'}">
+                                ${isInWatchlist ? '✓ Listede' : '+ Liste'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // İçerik detayı göster
+        function showContentDetail(id) {
+            const item = allContent.find(c => c.id === id);
+            if (!item) return;
+
+            const isInWatchlist = watchlist.some(w => w.id === id);
+            const meta = item.type === 'movie' 
+                ? `${item.year} • ${item.duration} • ${item.director}`
+                : `${item.year} • ${item.seasons} • ${item.episodes} • ${item.creator}`;
+
+            const platformsHTML = item.platforms.map(platform => `
+                <div class="platform-card">
+                    <div class="platform-logo">${platform.logo}</div>
+                    <div class="platform-name">${platform.name}</div>
+                    <div class="platform-prices">
+                        <div class="price-option"><strong>Aylık:</strong> ${platform.monthly}</div>
+                        <div class="price-option"><strong>Yıllık:</strong> ${platform.yearly}</div>
+                    </div>
+                    <button class="btn-subscribe" onclick="subscribeToPlatform('${platform.name}', 'monthly', ${item.id})">
+                        💳 Aylık Başla (${platform.monthly})
+                    </button>
+                    <button class="btn-subscribe" onclick="subscribeToPlatform('${platform.name}', 'yearly', ${item.id})" 
+                            style="background: #28a745;">
+                        🎯 Yıllık Başla (${platform.yearly}) - %17 İndirim!
+                    </button>
+                </div>
+            `).join('');
+
+            const detailHTML = `
+                <div class="movie-detail-header" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(20,20,20,1)), 
+                     linear-gradient(135deg, #333, #555);">
+                    <div class="movie-detail-content">
+                        <h1 class="detail-title">${item.title}</h1>
+                        <div class="detail-meta">
+                            <span>⭐ ${item.rating}</span>
+                            <span>${meta}</span>
+                        </div>
+                        <p class="detail-description">${item.description}</p>
+                        <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                            <button class="btn-action btn-primary" onclick="toggleWatchlist(${item.id})" 
+                                    style="background: ${isInWatchlist ? '#28a745' : '#e50914'};">
+                                ${isInWatchlist ? '✓ Listeden Çıkar' : '+ İzleme Listesi'}
+                            </button>
+                            <button class="btn-action btn-secondary" onclick="shareContent(${item.id})">
+                                📤 Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">🎬 Fragman</h3>
+                    <div class="trailer-container">
+                        <iframe src="${item.trailer}" allowfullscreen></iframe>
+                    </div>
+                    
+                    <div class="platforms-section">
+                        <h3 style="margin-bottom: 1rem;">📺 İzleme Platformları</h3>
+                        <p style="color: #ccc; margin-bottom: 1rem;">
+                            Bu ${item.type === 'movie' ? 'filmi' : 'diziyi'} aşağıdaki platformlarda izleyebilirsiniz:
+                        </p>
+                        <div class="platforms-grid">
+                            ${platformsHTML}
+                        </div>
+                    </div>
+                    
+                    <!-- AdSense Rectangle -->
+                    <div class="adsense-rectangle">
+                        <h4>💰 ADSENSE RECTANGLE - 336x280</h4>
+                        <p>İçerik içi premium reklam alanı</p>
+                        <div style="background: rgba(255,255,255,0.2); height: 200px; margin: 1rem auto; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                            AdSense Rectangle Reklamı
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">ℹ️ Detaylar</h3>
+                        <div style="background: #222; padding: 1.5rem; border-radius: 8px;">
+                            <p><strong>${item.type === 'movie' ? 'Yönetmen:' : 'Yaratıcı:'}</strong> ${item.director || item.creator}</p>
+                            <p><strong>Oyuncular:</strong> ${item.cast.join(', ')}</p>
+                            <p><strong>Tür:</strong> ${item.genre.charAt(0).toUpperCase() + item.genre.slice(1)}</p>
+                            <p><strong>Çıkış Yılı:</strong> ${item.year}</p>
+                            ${item.status ? `<p><strong>Durum:</strong> ${item.status === 'ongoing' ? 'Devam Ediyor' : item.status === 'completed' ? 'Tamamlandı' : 'İptal Edildi'}</p>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">💬 Yorumlar</h3>
+                        <div style="background: #222; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <div style="color: #e50914; font-weight: bold; margin-bottom: 0.5rem;">🎬 FilmSever2024</div>
+                            <p>Harika bir ${item.type === 'movie' ? 'film' : 'dizi'}! ${item.rating >= 8.5 ? 'Kesinlikle izlenmeli, mükemmel oyunculuk.' : 'Güzel bir yapım, tavsiye ederim.'}</p>
+                        </div>
+                        <div style="background: #222; padding: 1.5rem; border-radius: 8px;">
+                            <div style="color: #e50914; font-weight: bold; margin-bottom: 0.5rem;">🍿 SinemaTutkunu</div>
+                            <p>${item.cast[0]} muhteşem performans sergilemiş. ${item.rating >= 8.0 ? 'Tekrar tekrar izleyeceğim.' : 'Vakit geçirmek için iyi.'}</p>
+                        </div>
+                        ${currentUser ? `
+                            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                                <input type="text" placeholder="Yorumunuzu yazın..." style="flex: 1; padding: 1rem; background: #333; border: none; border-radius: 4px; color: white;">
+                                <button class="btn-action btn-primary" onclick="addComment()">Gönder</button>
+                            </div>
+                        ` : `
+                            <p style="text-align: center; color: #666; margin-top: 1rem;">
+                                Yorum yapmak için <a href="#" onclick="showLogin()" style="color: #e50914;">giriş yapın</a>
+                            </p>
+                        `}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('movieDetail').innerHTML = detailHTML;
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        // Platform aboneliği (Affiliate Link)
+        function subscribeToPlatform(platform, type, contentId) {
+            const content = allContent.find(c => c.id === contentId);
+            const price = type === 'monthly' ? '₺29.99-39.99' : '₺299.99-399.99';
+            const commission = type === 'yearly' ? 50 : 25;
+            
+            alert(`🎉 ${platform} ${type === 'monthly' ? 'aylık' : 'yıllık'} aboneliğe yönlendiriliyorsunuz!\n\n"${content.title}" artık izlenebilir!\n\n💰 Tahmini Komisyon: ${commission} TL`);
+            
+            // Gerçek affiliate linkleri (örnek)
+            const affiliateLinks = {
+                'Netflix': 'https://netflix.com/tr?ref=filmkolik_affiliate',
+                'Disney+': 'https://disneyplus.com/tr?ref=filmkolik_affiliate',
+                'Amazon Prime': 'https://primevideo.com/tr?ref=filmkolik_affiliate',
+                'HBO Max': 'https://hbomax.com/tr?ref=filmkolik_affiliate'
+            };
+            
+            setTimeout(() => {
+                window.open(affiliateLinks[platform] || '#', '_blank');
+            }, 1500);
+        }
+
+        // İzleme listesi toggle
+        function toggleWatchlist(id) {
+            if (!currentUser) {
+                alert('İzleme listesi için giriş yapmalısınız!');
+                showLogin();
+                return;
+            }
+
+            const content = allContent.find(c => c.id === id);
+            const existingIndex = watchlist.findIndex(w => w.id === id);
+            
+            if (existingIndex === -1) {
+                watchlist.push(content);
+                alert(`"${content.title}" izleme listenize eklendi! ✅`);
+            } else {
+                watchlist.splice(existingIndex, 1);
+                alert(`"${content.title}" izleme listenizden çıkarıldı. ❌`);
+            }
+            
+            // Mevcut bölümü güncelle
+            const currentSection = document.querySelector('.section.active').id;
+            showSection(currentSection);
+        }
+
+        // Arama fonksiyonları
+        function searchMovies() {
+            const query = document.getElementById('movieSearch').value.toLowerCase();
+            const movies = allContent.filter(item => 
+                item.type === 'movie' && 
+                (item.title.toLowerCase().includes(query) || 
+                 item.description.toLowerCase().includes(query))
+            );
+            document.getElementById('moviesContent').innerHTML = movies.map(createContentCard).join('');
+        }
+
+        function searchSeries() {
+            const query = document.getElementById('seriesSearch').value.toLowerCase();
+            const series = allContent.filter(item => 
+                item.type === 'series' && 
+                (item.title.toLowerCase().includes(query) || 
+                 item.description.toLowerCase().includes(query))
+            );
+            document.getElementById('seriesContent').innerHTML = series.map(createContentCard).join('');
+        }
+
+        // Filtreleme fonksiyonları
+        function filterMovies() {
+            const genre = document.getElementById('movieGenre').value;
+            const year = document.getElementById('movieYear').value;
+            const rating = document.getElementById('movieRating').value;
+            
+            let movies = allContent.filter(item => item.type === 'movie');
+            
+            if (genre) movies = movies.filter(m => m.genre === genre);
+            if (year) movies = movies.filter(m => m.year.toString() === year);
+            if (rating) movies = movies.filter(m => m.rating >= parseFloat(rating));
+            
+            document.getElementById('moviesContent').innerHTML = movies.map(createContentCard).join('');
+        }
+
+        function filterSeries() {
+            const genre = document.getElementById('seriesGenre').value;
+            const status = document.getElementById('seriesStatus').value;
+            
+            let series = allContent.filter(item => item.type === 'series');
+            
+            if (genre) series = series.filter(s => s.genre === genre);
+            if (status) series = series.filter(s => s.status === status);
+            
+            document.getElementById('seriesContent').innerHTML = series.map(createContentCard).join('');
+        }
+
+        function filterHomeContent() {
+            const genre = document.getElementById('homeGenre').value;
+            const type = document.getElementById('homeType').value;
+            
+            let content = allContent.slice();
+            
+            if (genre) content = content.filter(c => c.genre === genre);
+            if (type) {
+                if (type === 'movie') content = content.filter(c => c.type === 'movie');
+                if (type === 'series') content = content.filter(c => c.type === 'series');
+            }
+            
+            document.getElementById('homeContent').innerHTML = content.slice(0, 8).map(createContentCard).join('');
+        }
+
+        // Auth fonksiyonları
+        function showLogin() {
+            closeModal();
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function showRegister() {
+            closeModal();
+            document.getElementById('registerModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                alert(`Hoş geldiniz ${user.name}! 🎉`);
+                checkUserLogin();
+                closeModal();
+            } else {
+                alert('Hatalı email veya şifre! ❌');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (users.find(u => u.email === email)) {
+                alert('Bu email adresi zaten kayıtlı! ❌');
+                return;
+            }
+            
+            const newUser = { id: users.length + 1, name, email, password };
+            users.push(newUser);
+            currentUser = newUser;
+            
+            alert(`Kayıt başarılı! Hoş geldiniz ${name}! 🎉`);
+            checkUserLogin();
+            closeModal();
+        }
+
+        function logout() {
+            currentUser = null;
+            watchlist = [];
+            document.querySelector('.auth-buttons').style.display = 'flex';
+            document.getElementById('userProfile').style.display = 'none';
+            alert('Çıkış yapıldı! 👋');
+            showSection('home');
+        }
+
+        // Yardımcı fonksiyonlar
+        function shareContent(id) {
+            const content = allContent.find(c => c.id === id);
+            if (navigator.share) {
+                navigator.share({
+                    title: content.title,
+                    text: content.description,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link kopyalandı! 📋');
+            }
+        }
+
+        function addComment() {
+            if (!currentUser) {
+                showLogin();
+                return;
+            }
+            alert('Yorumunuz eklendi! 💬');
+        }
